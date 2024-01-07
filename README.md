@@ -1,5 +1,7 @@
 # URL Shortened
 
+The project is a web application that allows users to shorten URLs and redirect to the original versions. The application consists of a frontend (client) and a backend (server).
+
 ## Available Scripts
 
 In the project directory, you can run:
