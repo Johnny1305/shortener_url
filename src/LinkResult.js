@@ -13,29 +13,26 @@ const LinkResult = ({ inputValue }) => {
     try {
       setLoading(true);
 
-      // Update the API endpoint to the new Bitly API URL
-      const res = await axios.post(
-        "https://api-ssl.bitly.com/v4/shorten",
-        {
-          long_url: inputValue,
-        },
-        {
-          headers: {
-            Authorization: "Bearer 1dadc9442e0a9077d66f51144eb7487be8e6098c",
-            "Content-Type": "application/json",
-          },
+      // Actualiza la URL para que coincida con la nueva API de shrinkme.io
+      const apiKey = "57d3bff266ddfa796820d3ccc159a50507b33616"; // Asegúrate de usar tu API key
+      const res = await axios.get(`https://shrinkme.io/api`, {
+        params: {
+          api: apiKey,
+          url: inputValue,
+          alias: "" // Si deseas un alias personalizado, cámbialo aquí
         }
-      );
+      });
 
-      setShortenLink(res.data.id);
-    } catch (err) {
-      if (err.response && err.response.status === 429) {
-        // If API limit exceeded
+      // Comprueba si la respuesta indica un éxito
+      if (res.data.status === "success") {
+        setShortenLink(res.data.shortenedUrl);
+      } else if (res.data.status === "error" && res.data.message.includes("API limit exceeded")) {
         setApiLimitExceeded(true);
       } else {
-        // Other errors
-        setError(err);
+        setError(new Error(res.data.message || "Unknown error"));
       }
+    } catch (err) {
+      setError(err);
     } finally {
       setLoading(false);
     }
